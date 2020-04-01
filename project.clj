@@ -7,4 +7,5 @@
                  [aleph "0.4.6"]
                  [compojure "1.6.1"]
                  [org.clojure/core.async "1.0.567"]
-                 [cheshire "5.10.0"]])
+                 [cheshire "5.10.0"]
+                 [prismatic/schema "1.1.12"]])

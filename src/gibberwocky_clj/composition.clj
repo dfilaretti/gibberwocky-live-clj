@@ -1,19 +1,27 @@
 (ns gibberwocky-clj.composition)
 
-(def msg-pool
+(def composition
   (atom []))
 
-(defn add-msg
-  [msg]
-  (swap! msg-pool (fn [msgs] (conj msgs msg))))
+;;
+;; Mutating
+;;
 
-(defn stop-all
+(defn add-event
+  [msg]
+  (swap! composition (fn [msgs] (conj msgs msg))))
+
+(defn stop
   []
-  (reset! msg-pool []))
+  (reset! composition []))
+
+;;
+;; Querying
+;;
 
 (defn events-for-beat
   [n]
   (filter
     (fn [{:keys [beat] :as msg}]
       (<= n beat (inc n)))
-    @msg-pool))
+    @composition))

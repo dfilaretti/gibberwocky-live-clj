@@ -6,7 +6,7 @@
   "The Live Object Model (LOM) for the current Live set."
   (atom {}))
 
-(defn tracks-info
+(defn ->tracks
   "Gets info about tracks in the current Live set."
   []
   (map (fn [track]
@@ -14,9 +14,9 @@
           (:name track)]) (:tracks @lom)))
 
 ;; keep me at the bottom of this ns
-(defn update
-  [json]
+(defn update!
+  [new-lom]
   (reset!
     lom
-    (parse-string json true))
+    new-lom)
   (println "-> LOM has been updated!"))
