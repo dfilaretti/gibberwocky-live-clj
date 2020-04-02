@@ -5,14 +5,6 @@
 
 (use-fixtures :once schema.test/validate-schemas)
 
-(deftest msg-type-test
-  (is (= (sut/msg-type "2 seq 9")
-         :seq))
-  (is (= (sut/msg-type "{2 seq 9")
-         :lom))
-  (is (= (sut/msg-type "hello")
-         nil)))
-
 (deftest parse-test
   (is (= (sut/parse "2 seq 9")
          [:seq {:track-id "2"

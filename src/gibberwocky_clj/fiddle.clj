@@ -1,6 +1,6 @@
 (ns gibberwocky-clj.fiddle
   (:require
-    [gibberwocky-clj.core :refer :all]
+    [gibberwocky-clj.core :as core]
     [gibberwocky-clj.connection :as connection]
     [gibberwocky-clj.message.handler :as handler]
     [gibberwocky-clj.lom :as lom]

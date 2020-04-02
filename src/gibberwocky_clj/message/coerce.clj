@@ -1,10 +1,7 @@
-(ns gibberwocky-clj.message.coerce
-  (require [schema.core :as s]
-           [gibberwocky-clj.message.schema :as msg.schema]))
+(ns gibberwocky-clj.message.coerce)
 
-(s/defn ->raw-message
-  :- s/Str
-  [{:keys [track-id beat pitch velocity length]} :- msg.schema/Note]
+(defn ->raw-message
+  [{:keys [track-id beat pitch velocity length]}]
   (str track-id
        " add " beat
        " note " pitch " " velocity " " length))

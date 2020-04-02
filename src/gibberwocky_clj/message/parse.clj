@@ -1,27 +1,21 @@
 (ns gibberwocky-clj.message.parse
   "Messages coming from M4L gibberwocky"
-  (:require [cheshire.core :refer :all]
-            [schema.core :as s]
-            [gibberwocky-clj.message.schema :as msg.schema])
+  (:require [cheshire.core :refer :all])
   (:import (com.fasterxml.jackson.core JsonParseException)))
-
-(defn msg-type
-  [raw-msg]
-  (cond
-    ;; X seq Y
-    (re-matches #"(\d+) seq (\d+)" raw-msg)
-    :seq
-    ;; JSON (starts with "{")
-    (re-find #"^\{" raw-msg)
-    :lom))
 
 (defmulti
   parse
-  (fn [msg] (msg-type msg)))
+  (fn [raw-msg]
+    (cond
+      ;; X seq Y
+      (re-matches #"(\d+) seq (\d+)" raw-msg)
+      :seq
+      ;; JSON (starts with "{")
+      (re-find #"^\{" raw-msg)
+      :lom)))
 
-(s/defmethod parse :seq
-  :- msg.schema/Seq
-  [msg :- s/Str]
+(defmethod parse :seq
+  [msg]
   (let [[_ track-id beat] (re-matches
                             #"(\d+) seq (\d+)"
                             msg)]
@@ -29,16 +23,15 @@
      {:track-id track-id
       :beat     (read-string beat)}]))
 
-(s/defmethod parse :lom
-  :- msg.schema/Lom
-  [msg :- s/Str]
+(defmethod parse :lom
+  [msg]
   (try
     [:lom (parse-string msg true)]
     (catch JsonParseException _
       [:error {:reason ::json-parsing-failed
-               :msg msg}])))
+               :msg    msg}])))
 
-(s/defmethod parse :default
-  [msg :- s/Str]
+(defmethod parse :default
+  [msg]
   [:error {:reason ::unknown-msg
-           :msg msg}])
+           :msg    msg}])
