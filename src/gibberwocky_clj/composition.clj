@@ -11,6 +11,10 @@
   [msg]
   (swap! composition (fn [msgs] (conj msgs msg))))
 
+(defn add-events!
+  [msgs]
+  (reset! composition msgs))
+
 (defn remove-all-events!
   []
   (reset! composition []))

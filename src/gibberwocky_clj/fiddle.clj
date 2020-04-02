@@ -9,7 +9,6 @@
 
 (comment
   ;; let's connect to the Gibberworky server (M4L device)
-  (connection/close c)
   (def c @(connection/open))
   ;; and set a couple of things up things up...
   (handler/setup c)
@@ -24,22 +23,25 @@
   ;; e.g. let's look at available tracks (ID and name)
   (lom/->tracks)
   ;; Let's use the ID to play a note (simple)
-  (s/put! c "19 note 52")
+  (s/put! c "19 note 72")
   ;; let's now add some message to our pool
-  (do (composition/add-event! {:track-id 5 :beat 1 :pitch 64 :velocity 64 :length 50})
-      (composition/add-event! {:track-id 19 :beat 2 :pitch 64 :velocity 64 :length 50})
-      (composition/add-event! {:track-id 596 :beat 3 :pitch 64 :velocity 64 :length 50})
-      (composition/add-event! {:track-id 19 :beat 4 :pitch 67 :velocity 64 :length 50})
-      (composition/add-event! {:track-id 19 :beat 4.5 :pitch 60 :velocity 62 :length 50}))
-  ;; let's check our message pool
-  @composition/composition
+  (composition/add-events!
+    [{:track-id 5 :beat 1 :pitch 60 :velocity 64 :length 50}
+     {:track-id 5 :beat 2 :pitch 60 :velocity 64 :length 50}
+     {:track-id 5 :beat 3 :pitch 60 :velocity 64 :length 50}
+     {:track-id 5 :beat 4 :pitch 60 :velocity 64 :length 50}
+     {:track-id 5 :beat 2 :pitch 62 :velocity 64 :length 50}
+     {:track-id 5 :beat 4 :pitch 62 :velocity 64 :length 50}
+     {:track-id 5 :beat 1.5 :pitch 60 :velocity 40 :length 50}
+     {:track-id 5 :beat 1.75 :pitch 60 :velocity 30 :length 50}
+     {:track-id 596 :beat 3 :pitch 44 :velocity 64 :length 50}
+     {:track-id 19 :beat 4 :pitch 67 :velocity 64 :length 50}
+     {:track-id 19 :beat 4.5 :pitch 60 :velocity 62 :length 50}])
   ;; get msgs in the pool for beat 1 (as example)
   (composition/remove-all-events!)
-
   ;; or select different tracks in the live set...
   (s/put! c "select_track 19")
   (s/put! c "select_track 5")
-
   ;; And finally we close the connection...
   (connection/close c)
   ;; This shouldn't work anymore since connection is closed
