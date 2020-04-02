@@ -19,8 +19,9 @@
   parse
   (fn [msg] (msg-type msg)))
 
-(defmethod parse :seq
-  [msg]
+(s/defmethod parse :seq
+  :- msg.schema/Seq
+  [msg :- s/Str]
   (let [[_ track-id beat] (re-matches
                             #"(\d+) seq (\d+)"
                             msg)]
@@ -28,15 +29,16 @@
      {:track-id track-id
       :beat     (read-string beat)}]))
 
-(defmethod parse :lom
-  [msg]
+(s/defmethod parse :lom
+  :- msg.schema/Lom
+  [msg :- s/Str]
   (try
     [:lom (parse-string msg true)]
     (catch JsonParseException _
       [:error {:reason ::json-parsing-failed
                :msg msg}])))
 
-(defmethod parse :default
-  [msg]
+(s/defmethod parse :default
+  [msg :- s/Str]
   [:error {:reason ::unknown-msg
            :msg msg}])

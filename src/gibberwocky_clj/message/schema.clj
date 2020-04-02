@@ -6,11 +6,11 @@
 ;;
 
 (s/defschema Lom
-  [:lom
+  [(s/one (s/enum :lom) "lom")
    {s/Any s/Any}])
 
 (s/defschema Seq
-  [:seq
+  [(s/one (s/enum :seq) "seq")
    {:track-id s/Str
     :beat     s/Int}])
 
