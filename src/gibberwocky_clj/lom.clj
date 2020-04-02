@@ -1,5 +1,4 @@
 (ns gibberwocky-clj.lom
-  (:refer-clojure :exclude [update])
   (:require [cheshire.core :refer :all]))
 
 (def lom
@@ -12,11 +11,3 @@
   (map (fn [track]
          [(:id track)
           (:name track)]) (:tracks @lom)))
-
-;; keep me at the bottom of this ns
-(defn update!
-  [new-lom]
-  (reset!
-    lom
-    new-lom)
-  (println "-> LOM has been updated!"))

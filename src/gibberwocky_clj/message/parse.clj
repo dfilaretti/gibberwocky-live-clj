@@ -15,11 +15,6 @@
     (re-find #"^\{" raw-msg)
     :lom))
 
-(comment
-  (msg-type "2 seq 9")
-  (msg-type "{2 seq 9")
-  (msg-type "hello"))
-
 (defmulti
   parse
   (fn [msg] (msg-type msg)))
@@ -45,9 +40,3 @@
   [msg]
   [:error {:reason ::unknown-msg
            :msg msg}])
-
-(comment
-  (parse "2 seq 9")
-  (parse "{\"hello\":9}")
-  (parse "{aaaa")
-  (parse "hello world"))

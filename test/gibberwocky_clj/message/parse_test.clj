@@ -5,6 +5,23 @@
 
 (use-fixtures :once schema.test/validate-schemas)
 
-(deftest fooffff
-  (is (= (sut/foo 2 3)
-         5)))
+(deftest msg-type-test
+  (is (= (sut/msg-type "2 seq 9")
+         :seq))
+  (is (= (sut/msg-type "{2 seq 9")
+         :lom))
+  (is (= (sut/msg-type "hello")
+         nil)))
+
+(deftest parse-test
+  (is (= (sut/parse "2 seq 9")
+         [:seq {:track-id "2"
+                :beat 9}]))
+  (is (= (sut/parse "{\"hello\":9}")
+         [:lom {:hello 9}]))
+  (is (= (sut/parse "{aaaa")
+         [:error {:reason ::sut/json-parsing-failed
+                  :msg "{aaaa"}]))
+  (is (= (sut/parse "hello world")
+         [:error {:reason ::sut/unknown-msg
+                  :msg "hello world"}])))

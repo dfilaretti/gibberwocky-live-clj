@@ -6,11 +6,13 @@
 ;;
 
 (s/defschema Lom
-  {s/Any s/Any})
+  [:lom
+   {s/Any s/Any}])
 
 (s/defschema Seq
-  {:track-id s/Str
-   :beat     s/Int})
+  [:seq
+   {:track-id s/Str
+    :beat     s/Int}])
 
 ;;
 ;; Messages going TO Live
