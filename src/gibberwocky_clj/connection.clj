@@ -29,16 +29,20 @@
     connection
     (composition/events-for-beat beat)))
 
+(defn handle-incoming-msg
+  [connection
+   [msg-type msg-data]]
+  (case msg-type
+    :seq
+    (send-seq-data! connection msg-data)
+    :lom
+    (lom/update! msg-data)
+    :error
+    nil))
+
 (defn setup
   "Setup all necessaries callbacks"
   [connection]
   (s/consume
-    lom/update!
-    (->> connection
-         (s/map msg.parse/lom)
-         (s/filter #(not= % nil))))
-  (s/consume
-    (partial send-seq-data! connection)
-    (->> connection
-         (s/map msg.parse/seq)
-         (s/filter identity))))
+    (partial handle-incoming-msg connection)
+    (s/map msg.parse/parse connection)))

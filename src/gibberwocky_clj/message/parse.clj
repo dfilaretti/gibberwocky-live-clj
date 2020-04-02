@@ -1,55 +1,53 @@
 (ns gibberwocky-clj.message.parse
   "Messages coming from M4L gibberwocky"
-  (:refer-clojure :exclude [seq])
   (:require [cheshire.core :refer :all]
             [schema.core :as s]
             [gibberwocky-clj.message.schema :as msg.schema])
   (:import (com.fasterxml.jackson.core JsonParseException)))
 
-;;
-;; Utils
-;;
+(defn msg-type
+  [raw-msg]
+  (cond
+    ;; X seq Y
+    (re-matches #"(\d+) seq (\d+)" raw-msg)
+    :seq
+    ;; JSON (starts with "{")
+    (re-find #"^\{" raw-msg)
+    :lom))
 
-(defn starts-with-curly-brace?
+(comment
+  (msg-type "2 seq 9")
+  (msg-type "{2 seq 9")
+  (msg-type "hello"))
+
+(defmulti
+  parse
+  (fn [msg] (msg-type msg)))
+
+(defmethod parse :seq
   [msg]
-  (re-find #"^\{" msg))
+  (let [[_ track-id beat] (re-matches
+                            #"(\d+) seq (\d+)"
+                            msg)]
+    [:seq
+     {:track-id track-id
+      :beat     (read-string beat)}]))
+
+(defmethod parse :lom
+  [msg]
+  (try
+    [:lom (parse-string msg true)]
+    (catch JsonParseException _
+      [:error {:reason ::json-parsing-failed
+               :msg msg}])))
+
+(defmethod parse :default
+  [msg]
+  [:error {:reason ::unknown-msg
+           :msg msg}])
 
 (comment
-  (starts-with-curly-brace? "{hello")
-  (starts-with-curly-brace? "2 hello"))
-
-;;
-;; Parsing LOM
-;;
-
-(s/defn lom
-  :- msg.schema/Lom
-  [msg :- s/Str]
-  (if (starts-with-curly-brace? msg)
-    (try
-     (parse-string msg true)
-     (catch JsonParseException _))))
-
-(comment
-  (lom "{\"foo\" : 99}")
-  (lom "ASDF")
-  (lom "2 seq 4"))
-
-;;
-;; Parsing seq
-;;
-
-;; keep me last!!
-(s/defn seq
-  :- msg.schema/Seq
-  [msg :- s/Str]
-  (if-let [[_ track-id beat] (re-matches
-                               #"(\d+) seq (\d+)"
-                               msg)]
-    {:track-id track-id
-     :beat     (read-string beat)}))
-
-(comment
-  (seqq "2 seq 4")
-  (seqq "2 x 4")
-  (seqq ""))
+  (parse "2 seq 9")
+  (parse "{\"hello\":9}")
+  (parse "{aaaa")
+  (parse "hello world"))
