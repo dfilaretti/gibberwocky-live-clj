@@ -22,6 +22,6 @@
 (defn events-for-beat
   [n]
   (filter
-    (fn [{:keys [beat] :as msg}]
+    (fn [[_ {:keys [beat]}]]
       (<= n beat (inc n)))
     @composition))

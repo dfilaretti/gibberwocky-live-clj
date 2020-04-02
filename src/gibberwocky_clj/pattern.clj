@@ -5,23 +5,28 @@
 ;; Generate
 ;;
 
-;; drum :: ID -> notes -> Pattern
+;; drum :: String -> [Int] -> Pattern
 (defn simple-seq
-  [track-id & notes]
+  [track-id notes]
   (let [n (count notes)
         gap (/ 4 n)
         beats (take n (iterate (partial + gap) 1))]
     (map
-      (fn [note beat]
-        {:track-id track-id
-         :beat beat
-         :pitch note
-         :velocity 64
-         :length 50})
+      (fn [note
+           beat]
+        [:note
+         {:track-id track-id
+          :beat     beat
+          :pitch    note
+          :velocity 64
+          :length   50}])
       notes beats)))
 
 ;;
 ;; Transformers
 ;;
 
-;; TODO
+;; stack :: Pattern -> Pattern -> Pattern
+(def stack
+  "Superimpose two patterns"
+  concat)

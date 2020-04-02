@@ -32,31 +32,35 @@
   ;; A *pattern* is just a collection of *events*.
   ;; We can create one manually:
   (composition/replace-pattern!
-    [{:track-id 5 :beat 1 :pitch 60 :velocity 64 :length 50}
-     {:track-id 5 :beat 2 :pitch 60 :velocity 64 :length 50}
-     {:track-id 5 :beat 3 :pitch 60 :velocity 64 :length 50}
-     {:track-id 5 :beat 4 :pitch 60 :velocity 64 :length 50}
-     {:track-id 5 :beat 2 :pitch 62 :velocity 64 :length 50}
-     {:track-id 5 :beat 4 :pitch 62 :velocity 64 :length 50}
-     {:track-id 5 :beat 1.5 :pitch 60 :velocity 40 :length 50}
-     {:track-id 5 :beat 1.75 :pitch 60 :velocity 30 :length 50}
-     {:track-id 596 :beat 3 :pitch 44 :velocity 64 :length 50}
-     {:track-id 19 :beat 4 :pitch 67 :velocity 64 :length 50}
-     {:track-id 19 :beat 4.5 :pitch 60 :velocity 62 :length 50}])
+    [[:note {:track-id 19 :beat 4 :pitch 60 :velocity 64 :length 50}]
+     [:note {:track-id 19 :beat 4.5 :pitch 61 :velocity 64 :length 50}]
+     [:note {:track-id 5 :beat 2 :pitch 62 :velocity 64 :length 50}]
+     [:note {:track-id 5 :beat 4 :pitch 62 :velocity 64 :length 50}]
+     [:note {:track-id 5 :beat 1.5 :pitch 64 :velocity 64 :length 50}]
+     [:note {:track-id 5 :beat 2.5 :pitch 64 :velocity 64 :length 50}]
+     [:note {:track-id 5 :beat 3.5 :pitch 64 :velocity 64 :length 50}]
+     [:note {:track-id 5 :beat 4.5 :pitch 64 :velocity 64 :length 50}]])
   ;; But we can also use helpers to generate patterns...
   (composition/replace-pattern!
     (pattern/simple-seq
-      5  ;; track id
-      60 62 60 60 62 60 60 60
-      60 62 60 60 62 60 62 62))
+      5
+      [60 62 60 60 62 60 60 60
+       60 62 60 60 62 60 62 62]))
   ;; and again...
   (composition/replace-pattern!
+    (pattern/stack
+      (pattern/simple-seq 19 [40 50])
+      (pattern/simple-seq 5 [60 60 60 60])
+      (pattern/simple-seq 19 [71 72 73 74])
+      (pattern/simple-seq 19 (map (partial + 12) [71 72 73 74 71 72 73 74]))))
+  ;; ... we could also use clojure's builtin functions!
+  (composition/replace-pattern!
     (pattern/simple-seq
-      19  ;; track id
-      40 50 60 70))
+      19                                                    ;; track id
+      (->> [40 52 74 70]
+           (repeat 4)
+           (apply concat))))
   ;; We can clear the pattern...
   (composition/clear-pattern!)
   ;; And finally we close the connection...
-  (connection/close c)
-  ;; This shouldn't work anymore since connection is closed
-  (s/put! c "5 note 62"))
+  (connection/close c))
