@@ -1,4 +1,5 @@
-(ns gibberwocky-clj.pattern)
+(ns gibberwocky-clj.pattern
+  "A pattern is a collection of events")
 
 ;;
 ;; Generate

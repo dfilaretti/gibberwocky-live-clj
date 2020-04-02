@@ -13,7 +13,7 @@
 (defn send-events!
   [connection events]
   (->> events
-       (map msg.coerce/->raw-message)
+       (map msg.coerce/event->message)
        (s/put-all! connection)))
 
 (defn update-lom!

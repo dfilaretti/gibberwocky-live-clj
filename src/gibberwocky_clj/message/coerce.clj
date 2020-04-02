@@ -1,6 +1,6 @@
 (ns gibberwocky-clj.message.coerce)
 
-(defn ->raw-message
+(defn event->message
   [{:keys [track-id beat pitch velocity length]}]
   (str track-id
        " add " (float beat)
