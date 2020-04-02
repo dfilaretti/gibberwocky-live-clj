@@ -3,5 +3,5 @@
 (defn ->raw-message
   [{:keys [track-id beat pitch velocity length]}]
   (str track-id
-       " add " beat
+       " add " (float beat)
        " note " pitch " " velocity " " length))

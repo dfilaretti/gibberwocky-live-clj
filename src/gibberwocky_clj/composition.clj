@@ -7,15 +7,11 @@
 ;; Mutating
 ;;
 
-(defn add-event!
-  [msg]
-  (swap! composition (fn [msgs] (conj msgs msg))))
-
-(defn add-events!
+(defn replace-pattern!
   [msgs]
   (reset! composition msgs))
 
-(defn remove-all-events!
+(defn clear-pattern!
   []
   (reset! composition []))
 
